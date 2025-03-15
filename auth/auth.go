@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"html"
 	"log"
 	"net/http"
 	"regexp"
@@ -12,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"social-network/database"
-	// "forum/utils"
+	"forum/database"
+	"forum/utils"
 
 	"github.com/gofrs/uuid/v5"
 	"golang.org/x/crypto/bcrypt"
@@ -31,9 +30,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	email := EscapeString(strings.ToLower(r.FormValue("email")))
+	email := utils.EscapeString(strings.ToLower(r.FormValue("email")))
 	// fmt.Println("Username: ", email)
-	password := EscapeString(r.FormValue("password"))
+	password := utils.EscapeString(r.FormValue("password"))
 
 	const maxEmail = 100
 	const maxPassword = 100
@@ -115,13 +114,13 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username := EscapeString(r.FormValue("username"))
-	firstName := EscapeString(r.FormValue("firstName"))
-	lastName := EscapeString(r.FormValue("lastName"))
-	email := EscapeString(strings.ToLower(r.FormValue("email")))
-	gender := EscapeString(r.FormValue("gender"))
-	age := EscapeString(r.FormValue("age"))
-	password := EscapeString(r.FormValue("password"))
+	username := utils.EscapeString(r.FormValue("username"))
+	firstName := utils.EscapeString(r.FormValue("firstName"))
+	lastName := utils.EscapeString(r.FormValue("lastName"))
+	email := utils.EscapeString(strings.ToLower(r.FormValue("email")))
+	gender := utils.EscapeString(r.FormValue("gender"))
+	age := utils.EscapeString(r.FormValue("age"))
+	password := utils.EscapeString(r.FormValue("password"))
 
 	if gender == "" || (gender != "M" && gender != "F") {
 		response["error"] = "Gender must be either 'M' or 'F'"
@@ -138,19 +137,19 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if firstName == "" {
-		response["error"] = "First Name is required"
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(response)
-		return
-	}
+	// if firstName == "" {
+	// 	response["error"] = "First Name is required"
+	// 	w.WriteHeader(http.StatusBadRequest)
+	// 	json.NewEncoder(w).Encode(response)
+	// 	return
+	// }
 
-	if lastName == "" {
-		response["error"] = "Last Name is required"
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(response)
-		return
-	}
+	// if lastName == "" {
+	// 	response["error"] = "Last Name is required"
+	// 	w.WriteHeader(http.StatusBadRequest)
+	// 	json.NewEncoder(w).Encode(response)
+	// 	return
+	// }
 
 	errors, valid := ValidateInput(username, firstName, lastName, email, gender, age, password)
 	if !valid {
@@ -331,8 +330,4 @@ func ValidateInput(username, firstName, lastName, email, gender, age, password s
 		return errors, false
 	}
 	return nil, true
-}
-
-func EscapeString(s string) string {
-	return html.EscapeString(s)
 }
