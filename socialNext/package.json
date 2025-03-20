@@ -5,12 +5,13 @@
   "scripts": {
     "dev": "concurrently \"npm run dev:next\" \"npm run dev:go\"",
     "dev:next": "next dev",
-    "dev:go": "go run main.go",
+   "dev:go": "go run ../main.go",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "cookie": "^1.0.2",
     "next": "15.2.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
